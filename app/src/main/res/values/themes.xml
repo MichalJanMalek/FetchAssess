@@ -2,8 +2,24 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.FetchAssess" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
-        <!--<item name="colorPrimary">@color/purple</item> -->
+        <item name="colorPrimary">@color/purple</item>
     </style>
 
     <style name="Theme.FetchAssess" parent="Base.Theme.FetchAssess" />
+
+    <style name="AppSearchView" parent="Widget.AppCompat.SearchView" >
+        <!-- Query Text Color -->
+        <item name="android:textColorPrimary">@color/white</item>
+        <!-- Hint Color -->
+        <item name="android:textColorHint">@color/textColorDisabled</item>
+        <!-- Icon Color -->
+        <item name="android:tint">@color/white</item>
+        <!-- Background Color -->
+        <item name="android:background">@drawable/rounded_bar</item>
+        <!-- SearchHintIcon -->
+        <item name="android:searchHintIcon">@null</item>
+        <!-- Hint Text -->
+        <item name="android:queryHint">"@string/search_hint"</item>
+    </style>
+
 </resources>
