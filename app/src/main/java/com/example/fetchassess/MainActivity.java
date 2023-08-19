@@ -1,8 +1,15 @@
 package com.example.fetchassess;
 
+import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ListView;
+import android.widget.SearchView;
+import android.widget.ToggleButton;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -19,15 +26,19 @@ import org.json.JSONException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity:";
     private String queryCall;
-    ArrayList<SomeData> dataArrayList = new ArrayList<>();
-    ArrayList<SomeData> newArray = new ArrayList<>();
-    ArrayList<SomeData> filteredArray = new ArrayList<>();
-    ListView listRV;
-    CustomAdapter adapter;
+    private ArrayList<SomeData> dataArrayList = new ArrayList<>();
+    private ArrayList<SomeData> newArray = new ArrayList<>();
+    private ArrayList<SomeData> filteredArray = new ArrayList<>();
+    private ListView listRV;
+    private CustomAdapter adapter;
+    private ToggleButton tog;
+    private int max = 0;
+    private SearchView searchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,21 +46,51 @@ public class MainActivity extends AppCompatActivity {
 
         // Handle the splash screen.
         SplashScreen.installSplashScreen(this);
-
         setContentView(R.layout.activity_main);
 
         //initializing adapter class for recycler view
         listRV = (ListView) findViewById(R.id.itemListView);
         adapter = new CustomAdapter(dataArrayList, this, R.layout.list);
         listRV.setAdapter(adapter);
+        listRV.setTextFilterEnabled(true);
         adapter.notifyDataSetChanged();
 
         //setting adapter class for recycler view
         getData();
 
+        //toggles the sort to reverse the list and un-reverse
+        tog = findViewById(R.id.toggle);
+        tog.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b) {
+                    Collections.reverse(dataArrayList);
+                    adapter.notifyDataSetChanged();
+                }else {
+                    Collections.reverse(dataArrayList);
+                    adapter.notifyDataSetChanged();
+                }
+            }
+        });
 
-        //Collections.reverse(dataArrayList);
+        /*
+        //allows user to search listview
+        searchView = findViewById(R.id.searchbar);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener(){
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                MainActivity.this.adapter.getFilter().filter(s);
+                adapter.notifyDataSetChanged();
+                return false;
+            }
+            public boolean onQueryTextChange(String newS){
+                MainActivity.this.adapter.getFilter().filter(newS);
+                adapter.notifyDataSetChanged();
+                return false;
+            }
+        });*/
     }
+
     public void getData() {
         //query data from
         queryCall = "https://fetch-hiring.s3.amazonaws.com/hiring.json";
@@ -91,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
                             Log.d(TAG, "invalid");
                         } else {
                             dataArrayList.add(new SomeData(id, listId, name));
-                            Log.d(TAG, id);
+                            //Log.d(TAG, id);
                         }
                     }
 
@@ -144,7 +185,7 @@ public class MainActivity extends AppCompatActivity {
                     String s = dataArrayList.get(j).getSomeListId();
                     String t = dataArrayList.get(j).getSomeName();
                     String all = f + " " + s + " " + t;
-                    Log.d(TAG, all);
+                    //Log.d(TAG, all);
                     newArray.add(new SomeData(f, s, t));
                 }
             }
@@ -168,7 +209,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void seperatedLists(){
         int l = this.dataArrayList.size();
-        int max = 0;
 
         //find max value of listID
         for (int i = 0; i < l; i++) {
@@ -177,7 +217,5 @@ public class MainActivity extends AppCompatActivity {
                 max = Integer.valueOf(lNum);
             }
         }
-
-
     }
 }

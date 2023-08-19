@@ -11,6 +11,8 @@
     >
     <TableRow
         android:layout_height="wrap_content"
+        android:showDividers="middle"
+        android:divider="@drawable/table_divider_vert"
 
         >
         <TextView
@@ -27,13 +29,13 @@
         <TextView
             android:id="@+id/listIdentity"
             android:layout_width="0dp"
-            android:layout_weight=".25"
             android:layout_height="wrap_content"
+            android:layout_weight=".25"
+            android:background="#B5FFC34C"
             android:padding="8dp"
             android:text="ListID"
             android:textColor="@color/black"
-            android:textSize="18sp"
-            />
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/nameIdentity"
