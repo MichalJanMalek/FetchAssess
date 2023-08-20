@@ -2,20 +2,20 @@ package com.example.fetchassess;
 
 import android.content.Context;
 import android.view.LayoutInflater;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-import java.text.BreakIterator;
-import java.util.ArrayList;
-import androidx.recyclerview.widget.DiffUtil;
-import androidx.recyclerview.widget.ListAdapter;
-import androidx.recyclerview.widget.RecyclerView;
 
-public class CustomAdapter extends ArrayAdapter<SomeData> {
+import java.util.ArrayList;
+
+public class CustomAdapter extends ArrayAdapter<SomeData> implements Filterable {
+    private ArrayList<SomeData> filter_list;
     private int rL;
     private ArrayList<SomeData> dataSet;
     Context mContext;
@@ -27,16 +27,20 @@ public class CustomAdapter extends ArrayAdapter<SomeData> {
         TextView nameIdent;
     }
 
+    //custom adapter constructor
     public CustomAdapter(ArrayList<SomeData> data, Context context, int rLayout) {
         super(context, rLayout, data);
         this.dataSet = data;
         this.mContext = context;
         this.rL = rLayout;
+        this.filter_list = data;
     }
 
+    @NonNull
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
+        //find view
         View v = convertView;
 
         if (v == null) {
@@ -45,79 +49,83 @@ public class CustomAdapter extends ArrayAdapter<SomeData> {
             v = vi.inflate(rL, null);
         }
 
+        //get position of array from SomeData
         SomeData p = getItem(position);
 
+
         if (p != null) {
-            TextView tt1 = (TextView) v.findViewById(R.id.identify);
-            TextView tt2 = (TextView) v.findViewById(R.id.listIdentity);
-            TextView tt3 = (TextView) v.findViewById(R.id.nameIdentity);
+            //TextView IDs
+            TextView tv1 = (TextView) v.findViewById(R.id.identify);
+            TextView tv2 = (TextView) v.findViewById(R.id.listIdentity);
+            TextView tv3 = (TextView) v.findViewById(R.id.nameIdentity);
 
-            if (tt1 != null) {
-                tt1.setText(p.getSomeId());
+            //set 1st table column item to display ID
+            if (tv1 != null) {
+                tv1.setText(p.getSomeId());
             }
 
-            if (tt2 != null) {
-                tt2.setText(p.getSomeListId());
+            //set 2nd table column item to display listID
+            if (tv2 != null) {
+                tv2.setText(p.getSomeListId());
             }
 
-            if (tt3 != null) {
-                tt3.setText(p.getSomeName());
+            //set 3rd table column item to display name
+            if (tv3 != null) {
+                tv3.setText(p.getSomeName());
             }
         }
 
+        //return our view
         return v;
     }
 
-}
-/*
-public class CustomAdapter extends RecyclerView{
-    private ArrayList<SomeData> dataArrayList = new ArrayList<>();
-
-    public CustomAdapter(ArrayList<SomeData> dataArrayList, Context context) {
-        super(this);
-        this.dataArrayList = dataArrayList;
-    }
-
-    public void filter(ArrayList<SomeData> filterList){
-        // below line is to add our filtered
-        // list in our course array list.
-        dataArrayList = filterList;
-        // below line is to notify our adapter
-        // as change in recycler view data.
-        //notifyDataSetChanged();
-    }
-
     @NonNull
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence charSequence) {
+
+                FilterResults filterResults = new FilterResults();
+
+                if (charSequence == null || charSequence.length() == 0) {
+                    filterResults.count = dataSet.size();
+                    filterResults.values = dataSet;
+                } else {
+                    String search = charSequence.toString().toLowerCase();
+                    ArrayList<SomeData> result = new ArrayList<SomeData>();
+
+                    for (int i = 0; i < dataSet.size(); i++) {
+                        String name = dataSet.get(i).getSomeName();
+                        if (name.toLowerCase().contains(search)){
+                        result.add(dataSet.get(i));
+
+                        Log.d("Filtered", name);
+
+                        }
+                    }
+                    filterResults.count = result.size();
+                    filterResults.values = result;
+
+                    int dude = filterResults.count;
+
+                    Log.d("here", String.valueOf(dude));
+                }
+
+
+                return filterResults;
+            }
+
+            @Override
+            protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+
+                filter_list = (ArrayList<SomeData>) filterResults.values;
+                notifyDataSetChanged();
+
+            }
+        };
+    }
     @Override
-    public CustomAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // below line is to inflate our layout.
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list, parent, false);
-        return new ViewHolder(view);
+    public int getCount() {
+        return filter_list.size();
     }
-
-    @Override
-    public void onBindViewHolder(@NonNull CustomAdapter.ViewHolder holder, int position) {
-        // setting data to our views of recycler view.
-        SomeData data = dataArrayList.get(position);
-        holder.ident.setText(data.getSomeId());
-        holder.listIdent.setText(data.getSomeListId());
-        holder.nameJ.setText(data.getSomeName());
-
-    }
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        // creating variables for our views.
-        private final TextView ident;
-        private final TextView listIdent;
-        private final TextView nameJ;
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-            // initializing our views with their ids.
-            ident = itemView.findViewById(R.id.identify);
-            listIdent = itemView.findViewById(R.id.listIdentity);
-            nameJ = itemView.findViewById(R.id.nameIdentity);
-        }
-    }
-
-    public int getItemCount() {return dataArrayList.size();}
 }
- */

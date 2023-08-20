@@ -1,11 +1,7 @@
 package com.example.fetchassess;
 
-import android.annotation.SuppressLint;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.SearchView;
@@ -26,7 +22,6 @@ import org.json.JSONException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity:";
@@ -48,15 +43,9 @@ public class MainActivity extends AppCompatActivity {
         SplashScreen.installSplashScreen(this);
         setContentView(R.layout.activity_main);
 
-        //initializing adapter class for recycler view
-        listRV = (ListView) findViewById(R.id.itemListView);
-        adapter = new CustomAdapter(dataArrayList, this, R.layout.list);
-        listRV.setAdapter(adapter);
-        listRV.setTextFilterEnabled(true);
-        adapter.notifyDataSetChanged();
-
         //setting adapter class for recycler view
         getData();
+
 
         //toggles the sort to reverse the list and un-reverse
         tog = findViewById(R.id.toggle);
@@ -73,25 +62,36 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        /*
+
         //allows user to search listview
         searchView = findViewById(R.id.searchbar);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener(){
             @Override
             public boolean onQueryTextSubmit(String s) {
-                MainActivity.this.adapter.getFilter().filter(s);
-                adapter.notifyDataSetChanged();
+
+
                 return false;
             }
-            public boolean onQueryTextChange(String newS){
-                MainActivity.this.adapter.getFilter().filter(newS);
-                adapter.notifyDataSetChanged();
+            public boolean onQueryTextChange(String s) {
+
+                ArrayList<SomeData> queryArray = new ArrayList<>();
+                for (int i = 0; i < dataArrayList.size(); i++) {
+                    SomeData data = dataArrayList.get(i);
+                    if((data.getSomeName().toLowerCase().contains(s)) || (data.getSomeId().toLowerCase().contains(s))){
+                        queryArray.add(data);
+                    }
+                }
+
+                CustomAdapter newAdapt = new CustomAdapter(queryArray, MainActivity.this, R.layout.list);
+                listRV.setAdapter(newAdapt);
+
                 return false;
             }
-        });*/
+        });
     }
 
     public void getData() {
+        //ArrayList<SomeData> dataArrayList = new ArrayList<>();
         //query data from
         queryCall = "https://fetch-hiring.s3.amazonaws.com/hiring.json";
         RequestQueue requested = Volley.newRequestQueue(MainActivity.this);
@@ -129,16 +129,20 @@ public class MainActivity extends AppCompatActivity {
 
                         //if empty, just TAG invalid, else add to array
                         if (name.equals("") || name.equals("null")) {
-                            Log.d(TAG, "invalid");
+                            //Log.d(TAG, "invalid");
                         } else {
                             dataArrayList.add(new SomeData(id, listId, name));
                             //Log.d(TAG, id);
                         }
                     }
 
-                    filter();
+                    filter(dataArrayList);
 
+                    //initializing adapter class for recycler view
+                    listRV = (ListView) findViewById(R.id.itemListView);
+                    adapter = new CustomAdapter(dataArrayList, MainActivity.this, R.layout.list);
                     listRV.setAdapter(adapter);
+                    listRV.setTextFilterEnabled(true);
                     adapter.notifyDataSetChanged();
 
                 }
@@ -155,13 +159,14 @@ public class MainActivity extends AppCompatActivity {
         });
         requested.add(jsonAr);
     }
-    public void filter(){
-        int l = this.dataArrayList.size();
+    public void filter(ArrayList<SomeData> list){
+
+        int l = list.size();
         int max = 0;
 
         //find max value of listID
         for (int i = 0; i < l; i++) {
-            String lNum = this.dataArrayList.get(i).getSomeListId();
+            String lNum = list.get(i).getSomeListId();
             if (max < Integer.valueOf(lNum)) {
                 max = Integer.valueOf(lNum);
             }
@@ -171,7 +176,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d("Max Value", String.valueOf(max));
 
         //Lists results by listID num
-        Collections.sort(this.dataArrayList, new Comparator<SomeData>() {
+        Collections.sort(list, new Comparator<SomeData>() {
             public int compare(SomeData lt, SomeData rt) {
                 return lt.someListId.compareTo(rt.someListId);
             }
@@ -180,13 +185,15 @@ public class MainActivity extends AppCompatActivity {
         //split up array and added to filtered array
         for (int i = 1; i <= max; i++) {
             for (int j = 0; j < l; j++) {
-                if (i == Integer.valueOf(dataArrayList.get(j).getSomeListId())) {
-                    String f = dataArrayList.get(j).getSomeId();
-                    String s = dataArrayList.get(j).getSomeListId();
-                    String t = dataArrayList.get(j).getSomeName();
-                    String all = f + " " + s + " " + t;
+                if (i == Integer.valueOf(list.get(j).getSomeListId())) {
+                    String id = list.get(j).getSomeId();
+                    String listId = list.get(j).getSomeListId();
+                    String name = list.get(j).getSomeName();
+
+                    //String all = id + " " + s + " " + t;
                     //Log.d(TAG, all);
-                    newArray.add(new SomeData(f, s, t));
+
+                    newArray.add(new SomeData(id, listId, name));
                 }
             }
 
@@ -203,19 +210,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         //clear original array and replace it with filtered list
-        dataArrayList.clear();
-        dataArrayList.addAll(filteredArray);
-    }
-
-    public void seperatedLists(){
-        int l = this.dataArrayList.size();
-
-        //find max value of listID
-        for (int i = 0; i < l; i++) {
-            String lNum = this.dataArrayList.get(i).getSomeListId();
-            if (max < Integer.valueOf(lNum)) {
-                max = Integer.valueOf(lNum);
-            }
-        }
+        list.clear();
+        list.addAll(filteredArray);
     }
 }
