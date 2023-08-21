@@ -20,6 +20,12 @@ public class CustomAdapter extends ArrayAdapter<SomeData> implements Filterable 
     private ArrayList<SomeData> dataSet;
     Context mContext;
 
+    public void resetDataSet(ArrayList<SomeData> array) {
+        dataSet.clear();
+        dataSet.addAll(array);
+        notifyDataSetChanged();
+    }
+
     // View lookup cache
     private static class ViewHolder {
         TextView idIdent;
@@ -80,52 +86,53 @@ public class CustomAdapter extends ArrayAdapter<SomeData> implements Filterable 
     }
 
     @NonNull
+    @Override
     public Filter getFilter() {
         return new Filter() {
             @Override
             protected FilterResults performFiltering(CharSequence charSequence) {
-
                 FilterResults filterResults = new FilterResults();
 
-                if (charSequence == null || charSequence.length() == 0) {
-                    filterResults.count = dataSet.size();
-                    filterResults.values = dataSet;
+                if (charSequence.length() == 0) {
+                    filterResults.count = MainActivity.originArrayList.size();
+                    filterResults.values = MainActivity.originArrayList;
                 } else {
                     String search = charSequence.toString().toLowerCase();
                     ArrayList<SomeData> result = new ArrayList<SomeData>();
 
-                    for (int i = 0; i < dataSet.size(); i++) {
-                        String name = dataSet.get(i).getSomeName();
+                    filter_list=MainActivity.originArrayList;
+
+                    for (int i = 0; i < filter_list.size(); i++) {
+                        String name = filter_list.get(i).getSomeName();
                         if (name.toLowerCase().contains(search)){
-                        result.add(dataSet.get(i));
-
-                        Log.d("Filtered", name);
-
+                            result.add(filter_list.get(i));
+                            Log.d("Filtered", name);
                         }
                     }
                     filterResults.count = result.size();
                     filterResults.values = result;
 
                     int dude = filterResults.count;
-
                     Log.d("here", String.valueOf(dude));
                 }
-
 
                 return filterResults;
             }
 
             @Override
             protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+                //doesn't work
+                //filter_list = (ArrayList<SomeData>) filterResults.values; // Update filter_list
 
-                filter_list = (ArrayList<SomeData>) filterResults.values;
+                // Clear the current dataset
+                dataSet.clear();
+                dataSet.addAll((ArrayList<SomeData>) filterResults.values);
                 notifyDataSetChanged();
-
             }
         };
     }
+
+    // Return size of filter_list
     @Override
-    public int getCount() {
-        return filter_list.size();
-    }
+    public int getCount() {return dataSet.size(); }
 }

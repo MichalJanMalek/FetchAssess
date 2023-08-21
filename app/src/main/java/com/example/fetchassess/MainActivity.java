@@ -15,6 +15,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
+
+import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.core.splashscreen.SplashScreen;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -26,13 +28,13 @@ import java.util.Comparator;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity:";
     private String queryCall;
+    static ArrayList<SomeData> originArrayList = new ArrayList<>();
     private ArrayList<SomeData> dataArrayList = new ArrayList<>();
     private ArrayList<SomeData> newArray = new ArrayList<>();
     private ArrayList<SomeData> filteredArray = new ArrayList<>();
     private ListView listRV;
     private CustomAdapter adapter;
     private ToggleButton tog;
-    private int max = 0;
     private SearchView searchView;
 
     @Override
@@ -46,6 +48,11 @@ public class MainActivity extends AppCompatActivity {
         //setting adapter class for recycler view
         getData();
 
+        //initialize adapter
+        listRV = findViewById(R.id.itemListView);
+        adapter = new CustomAdapter(dataArrayList, MainActivity.this, R.layout.list);
+        listRV.setAdapter(adapter);
+        listRV.setTextFilterEnabled(true);
 
         //toggles the sort to reverse the list and un-reverse
         tog = findViewById(R.id.toggle);
@@ -62,7 +69,25 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
+        searchView = findViewById(R.id.searchbar);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener(){
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                return false;
+            }
+            @Override
+            public boolean onQueryTextChange(String s) {
+                if (s.isEmpty()) {
+                    dataArrayList.clear();
+                    dataArrayList.addAll(originArrayList); // Reset the adapter to the original dataset
+                    adapter.resetDataSet(originArrayList);
+                } else {
+                    adapter.getFilter().filter(s); // Apply filter for non-empty search text
+                }
+                return false;
+            }
+        });
+        /*
         //allows user to search listview
         searchView = findViewById(R.id.searchbar);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener(){
@@ -74,7 +99,10 @@ public class MainActivity extends AppCompatActivity {
             }
             public boolean onQueryTextChange(String s) {
 
-                ArrayList<SomeData> queryArray = new ArrayList<>();
+                if((s == null) || (s.length() == 0)){
+                    queryArray.clear();
+                    queryArray.addAll(dataArrayList);
+                }
                 for (int i = 0; i < dataArrayList.size(); i++) {
                     SomeData data = dataArrayList.get(i);
                     if((data.getSomeName().toLowerCase().contains(s)) || (data.getSomeId().toLowerCase().contains(s))){
@@ -87,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
 
                 return false;
             }
-        });
+        });*/
     }
 
     public void getData() {
@@ -102,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
         //JSONArray Query
         JsonArrayRequest jsonAr = new JsonArrayRequest(Request.Method.GET, queryCall, null, new Response.Listener<JSONArray>() {
             public void onResponse(JSONArray response) {
-                //dataArrayList.clear();
+                dataArrayList.clear();
 
                 try {
                     //strings we need to get from JSON file
@@ -137,12 +165,7 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     filter(dataArrayList);
-
-                    //initializing adapter class for recycler view
-                    listRV = (ListView) findViewById(R.id.itemListView);
-                    adapter = new CustomAdapter(dataArrayList, MainActivity.this, R.layout.list);
-                    listRV.setAdapter(adapter);
-                    listRV.setTextFilterEnabled(true);
+                    originArrayList.addAll(dataArrayList);
                     adapter.notifyDataSetChanged();
 
                 }
