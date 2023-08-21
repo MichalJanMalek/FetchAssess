@@ -14,6 +14,11 @@ This native Android app, developed in Java, retrieves data from the provided JSO
 
 *(Insert screenshots of the app in action here)*
 <img src="[https://your-image-url.type](https://github.com/MichalJanMalek/FetchAssess/blob/main/Screenshots/Screenshot_Fetch1.png)" width="50%" height="50%">
+<img
+  src="https://your-image-url.type](https://github.com/MichalJanMalek/FetchAssess/blob/main/Screenshots/Screenshot_Fetch1.png"
+  alt="Alt text"
+  title="Initial Load"
+  style="display: inline-block; margin: 0 auto; max-width: 300px">
 
 ## Installation
 
