@@ -12,20 +12,21 @@ This native Android app, developed in Java, retrieves data from the provided JSO
 
 ## Screenshots
 
-The data from the required source filtered and sorted accordingly
-<img src="https://github.com/MichalJanMalek/FetchAssess/blob/main/Screenshots/Screenshot_Fetch1.png" width="300">
+The data from the required source filtered and sorted accordingly<br>
+<img src="https://github.com/MichalJanMalek/FetchAssess/blob/main/Screenshots/Screenshot_Fetch1.png" width="300"><br>
 
-The same list but reversed after clicking the reverse button on the bottom
-<img src="https://github.com/MichalJanMalek/FetchAssess/blob/main/Screenshots/Screenshot_FetchReversed.png" width="300">
 
-The list being searched through
-<img src="https://github.com/MichalJanMalek/FetchAssess/blob/main/Screenshots/Screenshot_FetchSearch.png" width="300">
+The same list but reversed after clicking the reverse button on the bottom<br>
+<img src="https://github.com/MichalJanMalek/FetchAssess/blob/main/Screenshots/Screenshot_FetchReversed.png" width="300"><br>
 
-The searched list reversed
-<img src="https://github.com/MichalJanMalek/FetchAssess/blob/main/Screenshots/Screenshot_SearchReverse.png" width="300">
+The list being searched through<br>
+<img src="https://github.com/MichalJanMalek/FetchAssess/blob/main/Screenshots/Screenshot_FetchSearch.png" width="300"><br>
 
-Specific Search of the list
-<img src="https://github.com/MichalJanMalek/FetchAssess/blob/main/Screenshots/Screenshot_Specific.png" width="300">
+The searched list reversed<br>
+<img src="https://github.com/MichalJanMalek/FetchAssess/blob/main/Screenshots/Screenshot_SearchReverse.png" width="300"><br>
+
+Specific search of the list<br>
+<img src="https://github.com/MichalJanMalek/FetchAssess/blob/main/Screenshots/Screenshot_Specific.png" width="300"><br>
 
 ## Installation
 
@@ -36,3 +37,10 @@ Specific Search of the list
 ## Usage
 
 Upon launching the app, the list of items retrieved from the JSON URL will be displayed in a user-friendly manner, grouped by "listId" and sorted by "name". Items with blank or null "name" values will be filtered out, ensuring a clean and organized user experience.
+
+## Test Cases
+
+1. Scrolll through list to the bottom
+2. Click button on the bottom to reverse the list at any point during the scroll
+3. Use the search feature to find specific item
+4. Reverse the searched filtered list
