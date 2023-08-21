@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.Comparator;
 
 public class MainActivity extends AppCompatActivity {
+    //variables
     private static final String TAG = "MainActivity:";
     private String queryCall;
     static ArrayList<SomeData> originArrayList = new ArrayList<>();
@@ -36,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
     private CustomAdapter adapter;
     private ToggleButton tog;
     private SearchView searchView;
+    private int max;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,62 +62,35 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (b) {
+                    //reverse the list
                     Collections.reverse(dataArrayList);
+                    //update adapter
                     adapter.notifyDataSetChanged();
                 }else {
+                    //reverses the list
                     Collections.reverse(dataArrayList);
+
+                    //update adapter
                     adapter.notifyDataSetChanged();
                 }
             }
         });
 
+        //find our search view and watch our search bar for text change
         searchView = findViewById(R.id.searchbar);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener(){
             @Override
             public boolean onQueryTextSubmit(String s) {
                 return false;
             }
+            //query text change listener
             @Override
             public boolean onQueryTextChange(String s) {
-                if (s.isEmpty()) {
-                    dataArrayList.clear();
-                    dataArrayList.addAll(originArrayList); // Reset the adapter to the original dataset
-                    adapter.resetDataSet(originArrayList);
-                } else {
-                    adapter.getFilter().filter(s); // Apply filter for non-empty search text
-                }
+                // Apply filter for non-empty search text
+                adapter.getFilter().filter(s);
                 return false;
             }
         });
-        /*
-        //allows user to search listview
-        searchView = findViewById(R.id.searchbar);
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener(){
-            @Override
-            public boolean onQueryTextSubmit(String s) {
-
-
-                return false;
-            }
-            public boolean onQueryTextChange(String s) {
-
-                if((s == null) || (s.length() == 0)){
-                    queryArray.clear();
-                    queryArray.addAll(dataArrayList);
-                }
-                for (int i = 0; i < dataArrayList.size(); i++) {
-                    SomeData data = dataArrayList.get(i);
-                    if((data.getSomeName().toLowerCase().contains(s)) || (data.getSomeId().toLowerCase().contains(s))){
-                        queryArray.add(data);
-                    }
-                }
-
-                CustomAdapter newAdapt = new CustomAdapter(queryArray, MainActivity.this, R.layout.list);
-                listRV.setAdapter(newAdapt);
-
-                return false;
-            }
-        });*/
     }
 
     public void getData() {
@@ -164,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
 
-                    filter(dataArrayList);
+                    groupUp(dataArrayList);
                     originArrayList.addAll(dataArrayList);
                     adapter.notifyDataSetChanged();
 
@@ -182,10 +157,10 @@ public class MainActivity extends AppCompatActivity {
         });
         requested.add(jsonAr);
     }
-    public void filter(ArrayList<SomeData> list){
+    public void groupUp(ArrayList<SomeData> list){
 
         int l = list.size();
-        int max = 0;
+        max = 0;
 
         //find max value of listID
         for (int i = 0; i < l; i++) {
@@ -198,17 +173,18 @@ public class MainActivity extends AppCompatActivity {
         //check if we getting max value from listID
         Log.d("Max Value", String.valueOf(max));
 
-        //Lists results by listID num
+        //Compares listID in the list to then organize
         Collections.sort(list, new Comparator<SomeData>() {
             public int compare(SomeData lt, SomeData rt) {
                 return lt.someListId.compareTo(rt.someListId);
             }
         });
 
-        //split up array and added to filtered array
+        //split up array and added to filtered array which will group everything starting with listID 1, then listID 2, etc.....
         for (int i = 1; i <= max; i++) {
             for (int j = 0; j < l; j++) {
                 if (i == Integer.valueOf(list.get(j).getSomeListId())) {
+                    //values we need to get from the list
                     String id = list.get(j).getSomeId();
                     String listId = list.get(j).getSomeListId();
                     String name = list.get(j).getSomeName();

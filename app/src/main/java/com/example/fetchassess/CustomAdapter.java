@@ -20,12 +20,6 @@ public class CustomAdapter extends ArrayAdapter<SomeData> implements Filterable 
     private ArrayList<SomeData> dataSet;
     Context mContext;
 
-    public void resetDataSet(ArrayList<SomeData> array) {
-        dataSet.clear();
-        dataSet.addAll(array);
-        notifyDataSetChanged();
-    }
-
     // View lookup cache
     private static class ViewHolder {
         TextView idIdent;
@@ -85,6 +79,7 @@ public class CustomAdapter extends ArrayAdapter<SomeData> implements Filterable 
         return v;
     }
 
+    //filter our array when searching
     @NonNull
     @Override
     public Filter getFilter() {
@@ -93,6 +88,7 @@ public class CustomAdapter extends ArrayAdapter<SomeData> implements Filterable 
             protected FilterResults performFiltering(CharSequence charSequence) {
                 FilterResults filterResults = new FilterResults();
 
+                //if charSequence is 0 then set filterResults to the original array
                 if (charSequence.length() == 0) {
                     filterResults.count = MainActivity.originArrayList.size();
                     filterResults.values = MainActivity.originArrayList;
@@ -100,22 +96,33 @@ public class CustomAdapter extends ArrayAdapter<SomeData> implements Filterable 
                     String search = charSequence.toString().toLowerCase();
                     ArrayList<SomeData> result = new ArrayList<SomeData>();
 
+                    //need this to reset the filter list to then filter through
                     filter_list=MainActivity.originArrayList;
 
+                    //for size of the filter_list, get SomeName
                     for (int i = 0; i < filter_list.size(); i++) {
+
+                        //values we want to filter through
                         String name = filter_list.get(i).getSomeName();
-                        if (name.toLowerCase().contains(search)){
+                        String name2 = filter_list.get(i).getSomeId();
+
+                        //if Name or ID contains the query string, then add it to filtered list
+                        if ((name.toLowerCase().contains(search)) || (name2.toLowerCase().contains(search))){
                             result.add(filter_list.get(i));
                             Log.d("Filtered", name);
                         }
                     }
+
+                    //the filtered results to then output
                     filterResults.count = result.size();
                     filterResults.values = result;
 
+                    //just checking if filterResult is working with a tag
                     int dude = filterResults.count;
                     Log.d("here", String.valueOf(dude));
                 }
 
+                //return our filtered results
                 return filterResults;
             }
 
@@ -126,7 +133,11 @@ public class CustomAdapter extends ArrayAdapter<SomeData> implements Filterable 
 
                 // Clear the current dataset
                 dataSet.clear();
+
+                //set list View to show filtered results
                 dataSet.addAll((ArrayList<SomeData>) filterResults.values);
+
+                //update list view
                 notifyDataSetChanged();
             }
         };
