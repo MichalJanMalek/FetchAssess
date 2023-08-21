@@ -16,7 +16,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 
-import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.core.splashscreen.SplashScreen;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<SomeData> filteredArray = new ArrayList<>();
     private ListView listRV;
     private CustomAdapter adapter;
-    private ToggleButton tog;
+    public ToggleButton tog;
     private SearchView searchView;
     private int max;
 
@@ -90,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
     public void reverse(){
         //reverses the list
         Collections.reverse(dataArrayList);
+        Collections.reverse(originArrayList);
 
         //update adapter
         adapter.notifyDataSetChanged();
