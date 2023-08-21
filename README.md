@@ -12,13 +12,20 @@ This native Android app, developed in Java, retrieves data from the provided JSO
 
 ## Screenshots
 
-*(Insert screenshots of the app in action here)*
-<img src="[https://your-image-url.type](https://github.com/MichalJanMalek/FetchAssess/blob/main/Screenshots/Screenshot_Fetch1.png)" width="50%" height="50%">
-<img
-  src="https://your-image-url.type](https://github.com/MichalJanMalek/FetchAssess/blob/main/Screenshots/Screenshot_Fetch1.png"
-  alt="Alt text"
-  title="Initial Load"
-  style="display: inline-block; margin: 0 auto; max-width: 300px">
+The data from the required source filtered and sorted accordingly
+<img src="https://github.com/MichalJanMalek/FetchAssess/blob/main/Screenshots/Screenshot_Fetch1.png" width="300">
+
+The same list but reversed after clicking the reverse button on the bottom
+<img src="https://github.com/MichalJanMalek/FetchAssess/blob/main/Screenshots/Screenshot_FetchReversed.png" width="300">
+
+The list being searched through
+<img src="https://github.com/MichalJanMalek/FetchAssess/blob/main/Screenshots/Screenshot_FetchSearch.png" width="300">
+
+The searched list reversed
+<img src="https://github.com/MichalJanMalek/FetchAssess/blob/main/Screenshots/Screenshot_SearchReverse.png" width="300">
+
+Specific Search of the list
+<img src="https://github.com/MichalJanMalek/FetchAssess/blob/main/Screenshots/Screenshot_Specific.png" width="300">
 
 ## Installation
 
