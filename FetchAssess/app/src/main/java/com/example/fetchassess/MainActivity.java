@@ -61,17 +61,11 @@ public class MainActivity extends AppCompatActivity {
         tog.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                //reverse list went clicking either option
                 if (b) {
-                    //reverse the list
-                    Collections.reverse(dataArrayList);
-                    //update adapter
-                    adapter.notifyDataSetChanged();
+                    reverse();
                 }else {
-                    //reverses the list
-                    Collections.reverse(dataArrayList);
-
-                    //update adapter
-                    adapter.notifyDataSetChanged();
+                    reverse();
                 }
             }
         });
@@ -93,6 +87,13 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    public void reverse(){
+        //reverses the list
+        Collections.reverse(dataArrayList);
+
+        //update adapter
+        adapter.notifyDataSetChanged();
+    }
     public void getData() {
         //ArrayList<SomeData> dataArrayList = new ArrayList<>();
         //query data from
