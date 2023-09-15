@@ -1,5 +1,5 @@
 # FetchAssess
-Fetch Assessment for Software Engineer (Mobile) Apprenticeship
+Fetch Assessment for Software Engineer (Android)
 This native Android app, developed in Java, retrieves data from the provided JSON URL and displays it to the user in an organized and sorted list based on certain criteria.
 
 ## Features
@@ -9,6 +9,9 @@ This native Android app, developed in Java, retrieves data from the provided JSO
 - Filters out items with blank or null "name" values.
 - Reverse the sorted list data
 - Search through the list by searching for name or listID
+- Utilizes Retrofit to query JSON 
+- Utilizes Moshi for JSON parsing
+- Utilizes OkHttp for Caching offline for the json
 
 ## Screenshots
 
