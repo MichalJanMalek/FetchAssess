@@ -31,7 +31,7 @@ Specific search of the list<br>
 ## Installation
 
 1. Clone this repository.
-2. Open the project in Android Studio (version  or later).
+2. Open the project in Android Studio (Latest version of Android Studio | SDK 33).
 3. Build and run the app on an Android emulator or device with the latest release mobile OS.
 
 ## Usage
@@ -40,7 +40,7 @@ Upon launching the app, the list of items retrieved from the JSON URL will be di
 
 ## Test Cases
 
-1. Scrolll through list to the bottom
+1. Scroll through list to the bottom
 2. Click button on the bottom to reverse the list at any point during the scroll
 3. Use the search feature to find specific item
 4. Reverse the searched filtered list
