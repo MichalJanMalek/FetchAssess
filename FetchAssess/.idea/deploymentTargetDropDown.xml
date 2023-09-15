@@ -6,23 +6,12 @@
         <type value="RUNNING_DEVICE_TARGET" />
         <deviceKey>
           <Key>
-            <type value="VIRTUAL_DEVICE_PATH" />
-            <value value="C:\Users\malek\.android\avd\Pixel_7_API_33.avd" />
+            <type value="SERIAL_NUMBER" />
+            <value value="adb-28171FDH2009BG-QUW2j5._adb-tls-connect._tcp" />
           </Key>
         </deviceKey>
       </Target>
     </runningDeviceTargetSelectedWithDropDown>
-    <targetSelectedWithDropDown>
-      <Target>
-        <type value="QUICK_BOOT_TARGET" />
-        <deviceKey>
-          <Key>
-            <type value="VIRTUAL_DEVICE_PATH" />
-            <value value="C:\Users\malek\.android\avd\Pixel_7_API_33.avd" />
-          </Key>
-        </deviceKey>
-      </Target>
-    </targetSelectedWithDropDown>
-    <timeTargetWasSelectedWithDropDown value="2023-09-15T04:44:51.936975600Z" />
+    <timeTargetWasSelectedWithDropDown value="2023-09-15T05:01:21.832614Z" />
   </component>
 </project>

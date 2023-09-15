@@ -42,7 +42,6 @@ public class MainActivity extends AppCompatActivity {
     public ToggleButton tog;
     private SearchView searchView;
     private int max;
-    private SwipeRefreshLayout swipeRe;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,14 +105,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        swipeRe = findViewById(R.id.swiperefresh);
-        swipeRe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                // Load data using Retrofit
-                getData(apiService);
-            }
-        });
 
     }
     private void getData(ApiService apiService) {
