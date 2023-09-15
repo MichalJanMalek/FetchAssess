@@ -112,6 +112,11 @@
         app:layout_constraintBottom_toTopOf="@+id/toggle"
         app:layout_constraintTop_toBottomOf="@id/tableRow"
         tools:layout_editor_absoluteX="12dp">
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/swiperefresh"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
             <ListView
                 android:id="@+id/itemListView"
@@ -123,6 +128,7 @@
                 app:layout_behavior="@string/appbar_scrolling_view_behavior"
                 tools:listitem="@layout/list">
             </ListView>
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
         </LinearLayout>
 
     <ToggleButton

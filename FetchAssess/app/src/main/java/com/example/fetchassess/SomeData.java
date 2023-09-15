@@ -1,9 +1,13 @@
 package com.example.fetchassess;
 
 import java.io.Serializable;
+import com.squareup.moshi.Json;
 public class SomeData implements Serializable{
+    @Json(name = "id")
     String someId;
+    @Json(name = "listId")
     String someListId;
+    @Json(name = "name")
     String someName;
 
     public SomeData(String someId, String someListId, String someName) {

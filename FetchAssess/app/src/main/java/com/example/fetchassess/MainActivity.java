@@ -8,21 +8,26 @@ import android.widget.SearchView;
 import android.widget.ToggleButton;
 
 import androidx.appcompat.app.AppCompatActivity;
-
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.Volley;
-
 import androidx.core.splashscreen.SplashScreen;
-import org.json.JSONArray;
-import org.json.JSONException;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.android.volley.Response;
+import com.squareup.moshi.Moshi;
+
+
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
+
+import okhttp3.Cache;
+import okhttp3.OkHttpClient;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Retrofit;
+import retrofit2.converter.moshi.MoshiConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
     //variables
@@ -37,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
     public ToggleButton tog;
     private SearchView searchView;
     private int max;
+    private SwipeRefreshLayout swipeRe;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,8 +52,23 @@ public class MainActivity extends AppCompatActivity {
         SplashScreen.installSplashScreen(this);
         setContentView(R.layout.activity_main);
 
-        //setting adapter class for recycler view
-        getData();
+        // Define cache directory and size
+        File cacheDirectory = new File(getCacheDir(), "http_cache");
+        long cacheSize = 10 * 1024 * 1024; // 10 MB
+
+        // Initialize OkHttp with cache
+        Cache cache = new Cache(cacheDirectory, cacheSize);
+        OkHttpClient okHttpClient = new OkHttpClient.Builder().cache(cache).build();
+
+        // Initialize Moshi and Retrofit with OkHttp client
+        Moshi moshi = new Moshi.Builder().build();
+
+        Retrofit retrofit = new Retrofit.Builder().baseUrl("https://fetch-hiring.s3.amazonaws.com/").addConverterFactory(MoshiConverterFactory.create(moshi)).client(okHttpClient).build();
+
+        ApiService apiService = retrofit.create(ApiService.class);
+
+        //query data
+        getData(apiService);
 
         //initialize adapter
         listRV = findViewById(R.id.itemListView);
@@ -84,79 +105,59 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
-    }
 
-    public void reverse(){
-        //reverses the list
-        Collections.reverse(dataArrayList);
-        Collections.reverse(originArrayList);
-
-        //update adapter
-        adapter.notifyDataSetChanged();
-    }
-    public void getData() {
-        //ArrayList<SomeData> dataArrayList = new ArrayList<>();
-        //query data from
-        queryCall = "https://fetch-hiring.s3.amazonaws.com/hiring.json";
-        RequestQueue requested = Volley.newRequestQueue(MainActivity.this);
-
-        //see if I get here at least, ok I do now to get to the next level
-        Log.d(TAG, "queryData");
-
-        //JSONArray Query
-        JsonArrayRequest jsonAr = new JsonArrayRequest(Request.Method.GET, queryCall, null, new Response.Listener<JSONArray>() {
-            public void onResponse(JSONArray response) {
-                dataArrayList.clear();
-
-                try {
-                    //strings we need to get from JSON file
-                    String id;
-                    String listId;
-                    String name;
-
-                    //get JSON array from internet
-                    JSONArray allData = response;
-
-                    //length of JSONArray
-                    int length = allData.length();
-
-                    //test to see if we get data from JSON
-                    String test = allData.getJSONObject(0).getString("id");
-                    Log.d(TAG, test);
-
-                    //add from JSON file to our Java Class
-                    for (int i = 0; i < length; i++) {
-                        //variables to add to data class
-                        id = allData.getJSONObject(i).getString("id");
-                        listId = allData.getJSONObject(i).getString("listId");
-                        name = allData.getJSONObject(i).getString("name");
-
-                        //if empty, just TAG invalid, else add to array
-                        if (name.equals("") || name.equals("null")) {
-                            //Log.d(TAG, "invalid");
-                        } else {
-                            dataArrayList.add(new SomeData(id, listId, name));
-                            //Log.d(TAG, id);
-                        }
-                    }
-
-                    groupUp(dataArrayList);
-                    originArrayList.addAll(dataArrayList);
-                    adapter.notifyDataSetChanged();
-
-                }
-                // catch any JSON errors
-                catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, new Response.ErrorListener() {
+        swipeRe = findViewById(R.id.swiperefresh);
+        swipeRe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
-            public void onErrorResponse(VolleyError error) {
-
+            public void onRefresh() {
+                // Load data using Retrofit
+                getData(apiService);
             }
         });
-        requested.add(jsonAr);
+
+    }
+    private void getData(ApiService apiService) {
+        queryCall = "hiring.json";
+
+        Call<List<SomeData>> call = apiService.getItems();
+
+        call.enqueue(new Callback<List<SomeData>>() {
+            public void onResponse(Call<List<SomeData>> call, retrofit2.Response<List<SomeData>> response){
+                if (response.isSuccessful()) {
+                    List<SomeData> items = response.body();
+                    if (items != null) {
+                        // Filter out items with blank names
+                        List<SomeData> filteredItems = new ArrayList<>();
+                        for (SomeData item : items) {
+                            if (item.getSomeName() != null && !item.getSomeName().isEmpty()) {
+                                filteredItems.add(item);
+                            }
+                        }
+
+                        // update dataArrayList with filtered items
+                        dataArrayList.clear();
+                        dataArrayList.addAll(filteredItems);
+
+                        // group up the list
+                        groupUp(dataArrayList);
+                        originArrayList.clear();
+                        originArrayList.addAll(dataArrayList);
+
+                        //update the adapter
+                        adapter.notifyDataSetChanged();
+                    }
+                } else {
+                    // Handle the error
+                    Log.e(TAG, "Response not successful");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<SomeData>> call, Throwable t) {
+                // Handle the network request failure
+                Log.e(TAG, "Network request failed", t);
+            }
+        });
     }
     public void groupUp(ArrayList<SomeData> list){
 
@@ -185,15 +186,19 @@ public class MainActivity extends AppCompatActivity {
         for (int i = 1; i <= max; i++) {
             for (int j = 0; j < l; j++) {
                 if (i == Integer.valueOf(list.get(j).getSomeListId())) {
-                    //values we need to get from the list
-                    String id = list.get(j).getSomeId();
-                    String listId = list.get(j).getSomeListId();
-                    String name = list.get(j).getSomeName();
+                    if(list.get(j).getSomeName().equals("")){
+                        Log.e(TAG, "blank");
+                    }else {
+                        //values we need to get from the list
+                        String id = list.get(j).getSomeId();
+                        String listId = list.get(j).getSomeListId();
+                        String name = list.get(j).getSomeName();
 
-                    //String all = id + " " + s + " " + t;
-                    //Log.d(TAG, all);
+                        //String all = id + " " + s + " " + t;
+                        //Log.d(TAG, all);
 
-                    newArray.add(new SomeData(id, listId, name));
+                        newArray.add(new SomeData(id, listId, name));
+                    }
                 }
             }
 
@@ -212,5 +217,13 @@ public class MainActivity extends AppCompatActivity {
         //clear original array and replace it with filtered list
         list.clear();
         list.addAll(filteredArray);
+    }
+    public void reverse(){
+        //reverses the list
+        Collections.reverse(dataArrayList);
+        Collections.reverse(originArrayList);
+
+        //update adapter
+        adapter.notifyDataSetChanged();
     }
 }
